@@ -15,6 +15,7 @@ class AwsSdkDynamodbGrailsPlugin extends Plugin {
     def author = "Benoit Hediard"
     def authorEmail = "ben@agorapulse.com"
     def description = "Amazon DynamoDB related dependencies and artefacts"
+    def developers = [[name: "Jean-Vincent Drean", email: "jv@agorapulse.com"]]
 
     def documentation = "https://github.com/agorapulse/grails-aws-sdk-dynamodb"
     def license = "APACHE"
