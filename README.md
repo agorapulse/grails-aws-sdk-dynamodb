@@ -1,5 +1,5 @@
-Grails DynamoDB Plugin
-======================
+Grails AWS SDK DynamoDB Plugin
+==============================
 
 [![Build Status](https://travis-ci.org/agorapulse/grails-aws-sdk-dynamodb.svg?token=BpxbA1UyYnNoUwrDNXtN&branch=master)](https://travis-ci.org/agorapulse/grails-aws-sdk-dynamodb)
 
