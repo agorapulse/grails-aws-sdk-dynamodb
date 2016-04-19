@@ -1,7 +1,7 @@
 Grails AWS SDK DynamoDB Plugin
 ==============================
 
-[![Build Status](https://travis-ci.org/agorapulse/grails-aws-sdk-dynamodb.svg?token=BpxbA1UyYnNoUwrDNXtN&branch=master)](https://travis-ci.org/agorapulse/grails-aws-sdk-dynamodb)
+[![Build Status](https://travis-ci.org/agorapulse/grails-aws-sdk-dynamodb.svg?branch=master)](https://travis-ci.org/agorapulse/grails-aws-sdk-dynamodb)
 
 # Introduction
 
@@ -142,7 +142,7 @@ class FooItemDBService extends AbstractDBService<FooItem> {
 }
 ```
 
-## Creating table
+## Table management
 
 If your table does not exist yet, the DB service provides a method for that.
 
@@ -255,17 +255,19 @@ To avoid to consume too much read units, all count methods use the following set
 
 ```groovy
 // Query items by hash key
-ctx.fooItemDBService.query(hashKey)
+items = ctx.fooItemDBService.query(hashKey).results
 
 // Query items by simple condition
-ctx.fooItemDBService.query(hashKey, 'id', '4532432-', ComparisonOperator.BEGINS_WITH)
+items = ctx.fooItemDBService.query(hashKey, 'id', '4532432-', ComparisonOperator.BEGINS_WITH).results
 
 // Query items by conditions (with a Map<String, Condition>)
-ctx.fooItemDBService.queryByConditions(hashKey, rangeKeyConditions)
+items = ctx.fooItemDBService.queryByConditions(hashKey, rangeKeyConditions).results
 
 // Query items by dates range
-ctx.fooItemDBService.queryByDates(hashKey, 'creationDate', [after: new Date() - 7, before: new Date() - 1])
+items = ctx.fooItemDBService.queryByDates(hashKey, 'creationDate', [after: new Date() - 7, before: new Date() - 1]).results
 ```
+
+## Advanced usage
 
 If required, you can also directly use **AmazonDynamoDBClient** instance available at **fooItemDBService.client** and **DynamoDBMapper** instance available at **fooItemDBService.mapper**.
 
