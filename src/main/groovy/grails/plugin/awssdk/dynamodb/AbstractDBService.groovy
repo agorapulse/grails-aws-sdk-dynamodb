@@ -2,7 +2,7 @@ package grails.plugin.awssdk.dynamodb
 
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.regions.Region
-import com.amazonaws.regions.ServiceAbbreviations
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.datamodeling.*
 import com.amazonaws.services.dynamodbv2.model.*
@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
 @Log4j
 abstract class AbstractDBService<TItemClass> implements InitializingBean {
 
-    static SERVICE_NAME = ServiceAbbreviations.Dynamodb
+    static SERVICE_NAME = AmazonDynamoDB.ENDPOINT_PREFIX
 
     static final String INDEX_NAME_SUFFIX = 'Index' // Specific ranges ending with 'Index' are String concatenated indexes, to keep ordering (ex.: createdByUserIdIndex=37641047|2011-02-21T17:15:23.000Z|2424353910)
     static final int DEFAULT_QUERY_LIMIT = 20
