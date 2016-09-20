@@ -297,8 +297,8 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings
      * @return
      */
-    public int deleteAll(Object hashKey,
-                         Map settings = [:]) {
+    int deleteAll(Object hashKey,
+                  Map settings = [:]) {
         deleteAllByConditions(
                 hashKey,
                 [:],
@@ -316,11 +316,11 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings
      * @return
      */
-    public int deleteAll(Object hashKey,
-                         String rangeKeyName,
-                         rangeKeyValue,
-                         ComparisonOperator operator = ComparisonOperator.BEGINS_WITH,
-                         Map settings = [:]) {
+    int deleteAll(Object hashKey,
+                  String rangeKeyName,
+                  rangeKeyValue,
+                  ComparisonOperator operator = ComparisonOperator.BEGINS_WITH,
+                  Map settings = [:]) {
         Map conditions = [(rangeKeyName): buildCondition(rangeKeyValue, operator)]
         deleteAllByConditions(
                 hashKey,
@@ -337,10 +337,10 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param indexName
      * @return
      */
-    public int deleteAllByConditions(Object hashKey,
-                                     Map<String, Condition> rangeKeyConditions,
-                                     Map settings = [:],
-                                     String indexName = '') {
+    int deleteAllByConditions(Object hashKey,
+                              Map<String, Condition> rangeKeyConditions,
+                              Map settings = [:],
+                              String indexName = '') {
         if (!settings.containsKey('batchEnabled')) {
             settings.batchEnabled = true
         }
@@ -387,8 +387,8 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param rangeKey
      * @return
      */
-    def get(Object hashKey,
-            Object rangeKey) {
+    TItemClass get(Object hashKey,
+                   Object rangeKey) {
         mapper.load(itemClass, hashKey, rangeKey)
     }
 
@@ -401,9 +401,9 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings only used for setting throttle/readCapacityUnit when getting large sets
      * @return a list of DynamoDBItem
      */
-    List getAll(Object hashKey,
-                List rangeKeys,
-                Map settings = [:]) {
+    List<TItemClass> getAll(Object hashKey,
+                            List rangeKeys,
+                            Map settings = [:]) {
         Map result = [:]
         List objects = rangeKeys.unique().collect { it -> itemClass.newInstance((hashKeyName): hashKey, (rangeKeyName): it) }
         if (settings.throttle) {
@@ -462,11 +462,11 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
         result?.attributes[attributeName]?.getN()?.toInteger()
     }
 
-    Object getNewInstance() {
+    TItemClass getNewInstance() {
         itemClass.newInstance()
     }
 
-    List query(DynamoDBQueryExpression queryExpression) {
+    PaginatedQueryList<TItemClass> query(DynamoDBQueryExpression queryExpression) {
         mapper.query(this.itemClass, queryExpression)
     }
 
@@ -483,8 +483,8 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings
      * @return
      */
-    QueryResultPage query(Object hashKey,
-                          Map settings = [:]) {
+    QueryResultPage<TItemClass> query(Object hashKey,
+                                      Map settings = [:]) {
         queryByConditions(hashKey, [:], settings)
     }
 
@@ -504,11 +504,11 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings
      * @return
      */
-    QueryResultPage query(Object hashKey,
-                          String rangeKeyName,
-                          rangeKeyValue,
-                          ComparisonOperator operator = ComparisonOperator.EQ,
-                          Map settings = [:]) {
+    QueryResultPage<TItemClass> query(Object hashKey,
+                                      String rangeKeyName,
+                                      rangeKeyValue,
+                                      ComparisonOperator operator = ComparisonOperator.EQ,
+                                      Map settings = [:]) {
         if (rangeKeyValue == 'ANY' || !operator) {
             if (!rangeKeyName.endsWith(INDEX_NAME_SUFFIX)) {
                 rangeKeyName =+ INDEX_NAME_SUFFIX
@@ -535,10 +535,10 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings
      * @return
      */
-    QueryResultPage queryByConditions(Object hashKey,
-                                      Map<String, Condition> rangeKeyConditions,
-                                      Map settings = [:],
-                                      String indexName = '') {
+    QueryResultPage<TItemClass> queryByConditions(Object hashKey,
+                                                  Map<String, Condition> rangeKeyConditions,
+                                                  Map settings = [:],
+                                                  String indexName = '') {
         DynamoDBQueryExpression query = buildQueryExpression(hashKeyName, hashKey, settings)
         query.hashKeyValues = itemClass.newInstance((hashKeyName): hashKey)
         if (rangeKeyConditions) {
@@ -609,10 +609,10 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings
      * @return
      */
-    QueryResultPage queryByDates(Object hashKey,
-                                 String rangeKeyName,
-                                 Map rangeKeyDates,
-                                 Map settings = [:]) {
+    QueryResultPage<TItemClass> queryByDates(Object hashKey,
+                                             String rangeKeyName,
+                                             Map rangeKeyDates,
+                                             Map settings = [:]) {
         Map conditions = buildDateConditions(rangeKeyName, rangeKeyDates, settings['maxAfterDate'] as Date)
         queryByConditions(hashKey, conditions, settings)
     }
@@ -638,11 +638,11 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
      * @param settings
      * @return
      */
-    QueryResultPage queryByDailyDates(Object hashKey,
-                                      String rangeKeyName,
-                                      Map rangeKeyDates,
-                                      String rangeKeyPrefix = '',
-                                      Map settings = [:]) {
+    QueryResultPage<TItemClass> queryByDailyDates(Object hashKey,
+                                                  String rangeKeyName,
+                                                  Map rangeKeyDates,
+                                                  String rangeKeyPrefix = '',
+                                                  Map settings = [:]) {
         Map conditions = buildDailyDateConditions(rangeKeyName, rangeKeyDates, rangeKeyPrefix, settings['maxAfterDate'] as Date)
         QueryResultPage resultPage = queryByConditions(hashKey, conditions, settings)
 
