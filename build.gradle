@@ -47,7 +47,7 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
 
     // Latest Joda Time
-    compile 'joda-time:joda-time:2.9.2'
+    compile 'joda-time:joda-time:2.9.4'
 
     // Latest AWS SDK DynamoDB lib
     compile "com.amazonaws:aws-java-sdk-dynamodb:$awsJavaSdkVersion"
