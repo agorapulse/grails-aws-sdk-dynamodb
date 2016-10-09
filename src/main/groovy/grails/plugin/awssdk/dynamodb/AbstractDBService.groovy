@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*
 import com.amazonaws.services.dynamodbv2.model.*
 import grails.core.GrailsApplication
 import grails.plugin.awssdk.AwsClientUtil
+import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.InitializingBean
 
 import java.lang.reflect.Field
@@ -15,6 +16,7 @@ import java.lang.reflect.Method
 import java.text.ParseException
 import java.text.SimpleDateFormat
 
+@Slf4j
 abstract class AbstractDBService<TItemClass> implements InitializingBean {
 
     static SERVICE_NAME = AmazonDynamoDB.ENDPOINT_PREFIX
