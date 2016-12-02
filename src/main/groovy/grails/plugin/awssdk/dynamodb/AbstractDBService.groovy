@@ -28,8 +28,6 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
     static final String SERIALIZED_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     static final String SERIALIZED_DATE_DAILY_FORMAT = "yyyy-MM-dd"
     static final String SERIALIZED_DATE_TIMEZONE = 'GMT'
-    static final SimpleDateFormat dateFormatter = new SimpleDateFormat(SERIALIZED_DATE_FORMAT)
-    static final SimpleDateFormat dateDailyFormatter = new SimpleDateFormat(SERIALIZED_DATE_DAILY_FORMAT)
 
     protected static final int BATCH_DELETE_LIMIT = 100
     protected static final int WRITE_BATCH_SIZE = 100 // Max number of elements to write at once in DynamoDB (mixed tables)
@@ -68,8 +66,6 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
     protected AbstractDBService(Class<TItemClass> itemClass) {
         this.itemClass = itemClass
         this.mainTable = (DynamoDBTable) itemClass.getAnnotation(DynamoDBTable.class)
-        dateFormatter.timeZone = TimeZone.getTimeZone(SERIALIZED_DATE_TIMEZONE)
-        dateDailyFormatter.timeZone = TimeZone.getTimeZone(SERIALIZED_DATE_TIMEZONE)
 
         if (!mainTable) {
             throw new RuntimeException("Missing @DynamoDBTable annotation on class: ${itemClass}")
@@ -815,19 +811,27 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
         client.updateItem(request)
     }
 
-    static public Date deserializeDate(String date) throws ParseException {
+    static Date deserializeDate(String date) throws ParseException {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(SERIALIZED_DATE_FORMAT)
+        dateFormatter.timeZone = TimeZone.getTimeZone(SERIALIZED_DATE_TIMEZONE)
         dateFormatter.parse(date)
     }
 
-    static public Date deserializeDayDate(String date) throws ParseException {
+    static Date deserializeDayDate(String date) throws ParseException {
+        SimpleDateFormat dateDailyFormatter = new SimpleDateFormat(SERIALIZED_DATE_DAILY_FORMAT)
+        dateDailyFormatter.timeZone = TimeZone.getTimeZone(SERIALIZED_DATE_TIMEZONE)
         dateDailyFormatter.parse(date)
     }
 
-    static public String serializeDate(Date date) {
+    static String serializeDate(Date date) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(SERIALIZED_DATE_FORMAT)
+        dateFormatter.timeZone = TimeZone.getTimeZone(SERIALIZED_DATE_TIMEZONE)
         dateFormatter.format(date)
     }
 
-    static public String serializeDailyDate(Date date) {
+    static String serializeDailyDate(Date date) {
+        SimpleDateFormat dateDailyFormatter = new SimpleDateFormat(SERIALIZED_DATE_DAILY_FORMAT)
+        dateDailyFormatter.timeZone = TimeZone.getTimeZone(SERIALIZED_DATE_TIMEZONE)
         dateDailyFormatter.format(date)
     }
 
@@ -862,7 +866,7 @@ abstract class AbstractDBService<TItemClass> implements InitializingBean {
         } else if (key instanceof Boolean) {
             new AttributeValue().withN(key ? "1" : "0")
         } else if (key instanceof Date) {
-            new AttributeValue().withS(dateFormatter.format(key))
+            new AttributeValue().withS(serializeDate(key))
         } else {
             new AttributeValue().withS(key.toString())
         }
